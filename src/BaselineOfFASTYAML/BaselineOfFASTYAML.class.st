@@ -1,12 +1,12 @@
 Class {
-	#name : 'BaselineOfFASTXML',
+	#name : 'BaselineOfFASTYAML',
 	#superclass : 'BaselineOf',
 	#category : 'BaselineOfFASTYAML',
 	#package : 'BaselineOfFASTYAML'
 }
 
 { #category : 'baselines' }
-BaselineOfFASTXML >> baseline: spec [  
+BaselineOfFASTYAML >> baseline: spec [  
 
 	<baseline>
 	spec for: #common do: [
@@ -19,7 +19,7 @@ BaselineOfFASTXML >> baseline: spec [
 ]
 
 { #category : 'accessing' }
-BaselineOfFASTXML >> customProjectAttributes [  
+BaselineOfFASTYAML >> customProjectAttributes [  
 
 	^ PackageOrganizer default packages
 		  detect: [ :package | package name = 'BaselineOfFamix' ]
@@ -28,7 +28,7 @@ BaselineOfFASTXML >> customProjectAttributes [
 ]
 
 { #category : 'baselines' }
-BaselineOfFASTXML >> defineDependencies: spec [  
+BaselineOfFASTYAML >> defineDependencies: spec [  
 
 	spec baseline: 'FAST' with: [
 		spec
@@ -53,7 +53,7 @@ BaselineOfFASTXML >> defineDependencies: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfFASTXML >> defineGroups: spec [
+BaselineOfFASTYAML >> defineGroups: spec [
 
 	spec
 		group: 'core'
@@ -63,7 +63,7 @@ BaselineOfFASTXML >> defineGroups: spec [
 ]
 
 { #category : 'baselines' }
-BaselineOfFASTXML >> definePackages: spec [  
+BaselineOfFASTYAML >> definePackages: spec [  
 
 	spec
 		package: 'FAST-YAML-Model'
