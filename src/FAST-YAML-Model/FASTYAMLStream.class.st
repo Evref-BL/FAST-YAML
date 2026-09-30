@@ -2,6 +2,11 @@
 ## Relations
 ======================
 
+### Children
+| Relation | Origin | Opposite | Type | Comment |
+|---|
+| `childrenNodes` | `FASTYAMLStream` | `streamOwner` | `FASTYAMLEntity` | |
+
 ### Other
 | Relation | Origin | Opposite | Type | Comment |
 |---|
@@ -21,6 +26,9 @@ Class {
 	#superclass : 'FASTYAMLEntity',
 	#traits : 'FamixTHasImmediateSource',
 	#classTraits : 'FamixTHasImmediateSource classTrait',
+	#instVars : [
+		'#childrenNodes => FMMany type: #FASTYAMLEntity opposite: #streamOwner'
+	],
 	#category : 'FAST-YAML-Model-Entities',
 	#package : 'FAST-YAML-Model',
 	#tag : 'Entities'
@@ -29,8 +37,34 @@ Class {
 { #category : 'meta' }
 FASTYAMLStream class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #Stream super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
+]
+
+{ #category : 'adding' }
+FASTYAMLStream >> addChildrenNode: anObject [
+
+	<ignoreForCoverage>
+	<generated>
+	^ self childrenNodes add: anObject
+]
+
+{ #category : 'accessing' }
+FASTYAMLStream >> childrenNodes [
+	"Relation named: #childrenNodes type: #FASTYAMLEntity opposite: #streamOwner"
+
+	<ignoreForCoverage>
+	<generated>
+	<derived>
+	^ childrenNodes
+]
+
+{ #category : 'accessing' }
+FASTYAMLStream >> childrenNodes: anObject [
+
+	<ignoreForCoverage>
+	<generated>
+	childrenNodes value: anObject
 ]

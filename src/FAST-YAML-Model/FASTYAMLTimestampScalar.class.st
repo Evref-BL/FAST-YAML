@@ -1,5 +1,5 @@
 Class {
-	#name : 'FASTYAMLAnchorName',
+	#name : 'FASTYAMLTimestampScalar',
 	#superclass : 'FASTYAMLEntity',
 	#category : 'FAST-YAML-Model-Entities',
 	#package : 'FAST-YAML-Model',
@@ -7,10 +7,10 @@ Class {
 }
 
 { #category : 'meta' }
-FASTYAMLAnchorName class >> annotation [
+FASTYAMLTimestampScalar class >> annotation [
 
 	<ignoreForCoverage>
-	<FMClass: #AnchorName super: #FASTYAMLEntity>
+	<FMClass: #TimestampScalar super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
 ]

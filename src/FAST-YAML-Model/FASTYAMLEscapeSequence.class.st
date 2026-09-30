@@ -9,8 +9,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLEscapeSequence class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #EscapeSequence super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]

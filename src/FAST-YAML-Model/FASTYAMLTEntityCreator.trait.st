@@ -14,15 +14,16 @@ Trait {
 { #category : 'meta' }
 FASTYAMLTEntityCreator classSide >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #TEntityCreator super: #Object>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]
 
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newAlias [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLAlias new
 ]
@@ -30,6 +31,7 @@ FASTYAMLTEntityCreator >> newAlias [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newAliasName [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLAliasName new
 ]
@@ -37,6 +39,7 @@ FASTYAMLTEntityCreator >> newAliasName [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newAnchor [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLAnchor new
 ]
@@ -44,6 +47,7 @@ FASTYAMLTEntityCreator >> newAnchor [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newAnchorName [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLAnchorName new
 ]
@@ -51,6 +55,7 @@ FASTYAMLTEntityCreator >> newAnchorName [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockMapping [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockMapping new
 ]
@@ -58,6 +63,7 @@ FASTYAMLTEntityCreator >> newBlockMapping [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockMappingPair [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockMappingPair new
 ]
@@ -65,6 +71,7 @@ FASTYAMLTEntityCreator >> newBlockMappingPair [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockNode [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockNode new
 ]
@@ -72,6 +79,7 @@ FASTYAMLTEntityCreator >> newBlockNode [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockScalar new
 ]
@@ -79,6 +87,7 @@ FASTYAMLTEntityCreator >> newBlockScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockSequence [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockSequence new
 ]
@@ -86,6 +95,7 @@ FASTYAMLTEntityCreator >> newBlockSequence [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBlockSequenceItem [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBlockSequenceItem new
 ]
@@ -93,6 +103,7 @@ FASTYAMLTEntityCreator >> newBlockSequenceItem [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newBooleanScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLBooleanScalar new
 ]
@@ -100,6 +111,7 @@ FASTYAMLTEntityCreator >> newBooleanScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newComment [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLComment new
 ]
@@ -107,6 +119,7 @@ FASTYAMLTEntityCreator >> newComment [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newDirectiveName [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLDirectiveName new
 ]
@@ -114,6 +127,7 @@ FASTYAMLTEntityCreator >> newDirectiveName [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newDirectiveParameter [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLDirectiveParameter new
 ]
@@ -121,6 +135,7 @@ FASTYAMLTEntityCreator >> newDirectiveParameter [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newDocument [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLDocument new
 ]
@@ -128,6 +143,7 @@ FASTYAMLTEntityCreator >> newDocument [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newDoubleQuoteScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLDoubleQuoteScalar new
 ]
@@ -135,6 +151,7 @@ FASTYAMLTEntityCreator >> newDoubleQuoteScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newERROR [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLERROR new
 ]
@@ -142,6 +159,7 @@ FASTYAMLTEntityCreator >> newERROR [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newEscapeSequence [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLEscapeSequence new
 ]
@@ -149,6 +167,7 @@ FASTYAMLTEntityCreator >> newEscapeSequence [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newFloatScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLFloatScalar new
 ]
@@ -156,6 +175,7 @@ FASTYAMLTEntityCreator >> newFloatScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newFlowMapping [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLFlowMapping new
 ]
@@ -163,6 +183,7 @@ FASTYAMLTEntityCreator >> newFlowMapping [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newFlowNode [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLFlowNode new
 ]
@@ -170,6 +191,7 @@ FASTYAMLTEntityCreator >> newFlowNode [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newFlowPair [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLFlowPair new
 ]
@@ -177,6 +199,7 @@ FASTYAMLTEntityCreator >> newFlowPair [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newFlowSequence [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLFlowSequence new
 ]
@@ -184,6 +207,7 @@ FASTYAMLTEntityCreator >> newFlowSequence [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newIntegerScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLIntegerScalar new
 ]
@@ -191,6 +215,7 @@ FASTYAMLTEntityCreator >> newIntegerScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newNullScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLNullScalar new
 ]
@@ -198,6 +223,7 @@ FASTYAMLTEntityCreator >> newNullScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newPlainScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLPlainScalar new
 ]
@@ -205,6 +231,7 @@ FASTYAMLTEntityCreator >> newPlainScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newReservedDirective [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLReservedDirective new
 ]
@@ -212,6 +239,7 @@ FASTYAMLTEntityCreator >> newReservedDirective [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newSingleQuoteScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLSingleQuoteScalar new
 ]
@@ -219,6 +247,7 @@ FASTYAMLTEntityCreator >> newSingleQuoteScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newStream [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLStream new
 ]
@@ -226,6 +255,7 @@ FASTYAMLTEntityCreator >> newStream [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newStringScalar [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLStringScalar new
 ]
@@ -233,6 +263,7 @@ FASTYAMLTEntityCreator >> newStringScalar [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newTag [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLTag new
 ]
@@ -240,6 +271,7 @@ FASTYAMLTEntityCreator >> newTag [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newTagDirective [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLTagDirective new
 ]
@@ -247,6 +279,7 @@ FASTYAMLTEntityCreator >> newTagDirective [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newTagHandle [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLTagHandle new
 ]
@@ -254,13 +287,23 @@ FASTYAMLTEntityCreator >> newTagHandle [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newTagPrefix [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLTagPrefix new
 ]
 
 { #category : 'entity creation' }
+FASTYAMLTEntityCreator >> newTimestampScalar [
+
+	<ignoreForCoverage>
+	<generated>
+	^ self add: FASTYAMLTimestampScalar new
+]
+
+{ #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newYamlDirective [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLYamlDirective new
 ]
@@ -268,6 +311,7 @@ FASTYAMLTEntityCreator >> newYamlDirective [
 { #category : 'entity creation' }
 FASTYAMLTEntityCreator >> newYamlVersion [
 
+	<ignoreForCoverage>
 	<generated>
 	^ self add: FASTYAMLYamlVersion new
 ]
