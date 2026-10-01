@@ -57,8 +57,7 @@ BaselineOfFASTYAML >> defineGroups: spec [
 
 	spec
 		group: 'core'
-		with: #( 'FAST-YAML-Model' 
-			   'FAST-YAML-Model-Generator' );
+		with: #( 'FAST-YAML-Model' 'FAST-YAML-Model-Generator' 'FAST-YAML-Tests' );
 		group: 'tools' with: #( 'core' 'FAST-YAML-Tools' ) 
 ]
 
@@ -69,7 +68,8 @@ BaselineOfFASTYAML >> definePackages: spec [
 		package: 'FAST-YAML-Model'
 		with: [ spec requires: #( 'FAST' ) ];
 		package: 'FAST-YAML-Model-Generator'; 
-		package: 'FAST-YAML-Tools'
+		package: 'FAST-YAML-Tools';
+		package: 'FAST-YAML-Tests'
 		with: [ spec requires: #( 'TreeSitter' ) ].
 
 	"In case of no Famix loaded"
