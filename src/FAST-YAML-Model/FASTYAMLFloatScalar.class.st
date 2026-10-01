@@ -9,8 +9,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLFloatScalar class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #FloatScalar super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]

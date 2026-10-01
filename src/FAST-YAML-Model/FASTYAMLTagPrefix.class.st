@@ -9,8 +9,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLTagPrefix class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #TagPrefix super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]

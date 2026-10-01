@@ -39,7 +39,8 @@ Class {
 		'tagHandle',
 		'tagPrefix',
 		'yamlDirective',
-		'yamlVersion'
+		'yamlVersion',
+		'timestampScalar'
 	],
 	#category : 'FAST-YAML-Model-Generator',
 	#package : 'FAST-YAML-Model-Generator'
@@ -103,37 +104,136 @@ FASTYAMLMetamodelGenerator >> defineClasses [
 	tagPrefix := builder newClassNamed: #TagPrefix.
 	yamlDirective := builder newClassNamed: #YamlDirective.
 	yamlVersion := builder newClassNamed: #YamlVersion.
+	timestampScalar := builder newClassNamed: #TimestampScalar.
 ]
 
 { #category : 'definition' }
 FASTYAMLMetamodelGenerator >> defineHierarchy [
 	"define class hierarchy"
-
 	super defineHierarchy.
-
 	entity --|> tEntity.
-	
-	stream --|> #THasImmediateSource. 
+	entity --|> #TEntityMetaLevelDependency.
 
 	_ERROR --|> #THasImmediateSource.
-	 
 
-	
+	stream --|> #THasImmediateSource.
+
+
 ]
 
 { #category : 'definition' }
 FASTYAMLMetamodelGenerator >> defineRelations [
-
 	super defineRelations.
+
 	(entity property: #'genericChildren') <>-* (entity property: #'genericParent').
+
+
+	" ALIAS (SINGLE CHILD) "
+	((alias property: #childrenNode) comment: '')
+		<>- ((entity property: #aliasOwner) comment: '').
+
+
+	" ANCHOR (SINGLE CHILD) "
+	((anchor property: #childrenNode) comment: '')
+		<>- ((entity property: #anchorOwner) comment: '').
+
+
+	" BLOCK_MAPPING (COLLECTION) "
+	((blockMapping property: #childrenNodes) comment: '')
+		<>-* ((entity property: #blockMappingOwner) comment: '').
+
+
+	" BLOCK_MAPPING_PAIR "
+	((blockMappingPair property: #key) comment: '')
+		<>- ((entity property: #blockMappingPairKeyOwner) comment: '').
+
+	((blockMappingPair property: #value) comment: '')
+		<>- ((entity property: #blockMappingPairValueOwner) comment: '').
+
+
+	" BLOCK_NODE (COLLECTION) "
+	((blockNode property: #childrenNodes) comment: '')
+		<>-* ((entity property: #blockNodeOwner) comment: '').
+
+
+	" BLOCK_SEQUENCE (COLLECTION) "
+	((blockSequence property: #childrenNodes) comment: '')
+		<>-* ((entity property: #blockSequenceOwner) comment: '').
+
+
+	" BLOCK_SEQUENCE_ITEM (SINGLE CHILD) "
+	((blockSequenceItem property: #childrenNode) comment: '')
+		<>- ((entity property: #blockSequenceItemOwner) comment: '').
+
+
+	" DOCUMENT (COLLECTION) "
+	((document property: #childrenNodes) comment: '')
+		<>-* ((entity property: #documentOwner) comment: '').
+
+
+	" DOUBLE_QUOTE_SCALAR (COLLECTION) "
+	((doubleQuoteScalar property: #childrenNodes) comment: '')
+		<>-* ((entity property: #doubleQuoteScalarOwner) comment: '').
+
+
+	" FLOW_MAPPING (COLLECTION) "
+	((flowMapping property: #childrenNodes) comment: '')
+		<>-* ((entity property: #flowMappingOwner) comment: '').
+
+
+	" FLOW_NODE (COLLECTION) "
+	((flowNode property: #childrenNodes) comment: '')
+		<>-* ((entity property: #flowNodeOwner) comment: '').
+
+
+	" FLOW_PAIR "
+	((flowPair property: #key) comment: '')
+		<>- ((flowNode property: #flowPairKeyOwner) comment: '').
+
+	((flowPair property: #value) comment: '')
+		<>- ((flowNode property: #flowPairValueOwner) comment: '').
+
+
+	" FLOW_SEQUENCE (COLLECTION) "
+	((flowSequence property: #childrenNodes) comment: '')
+		<>-* ((entity property: #flowSequenceOwner) comment: '').
+
+
+	" PLAIN_SCALAR (SINGLE CHILD) "
+	((plainScalar property: #childrenNode) comment: '')
+		<>- ((entity property: #plainScalarOwner) comment: '').
+
+
+	" RESERVED_DIRECTIVE (COLLECTION) "
+	((reservedDirective property: #childrenNodes) comment: '')
+		<>-* ((entity property: #reservedDirectiveOwner) comment: '').
+
+
+	" SINGLE_QUOTE_SCALAR (COLLECTION) "
+	((singleQuoteScalar property: #childrenNodes) comment: '')
+		<>-* ((entity property: #singleQuoteScalarOwner) comment: '').
+
+
+	" STREAM (COLLECTION) "
+	((stream property: #childrenNodes) comment: '')
+		<>-* ((entity property: #streamOwner) comment: '').
+
+
+	" TAG_DIRECTIVE (COLLECTION) "
+	((tagDirective property: #childrenNodes) comment: '')
+		<>-* ((entity property: #tagDirectiveOwner) comment: '').
+
+
+	" YAML_DIRECTIVE (SINGLE CHILD) "
+	((yamlDirective property: #childrenNode) comment: '')
+		<>- ((entity property: #yamlDirectiveOwner) comment: '').
+
+
 ]
 
 { #category : 'definition' }
 FASTYAMLMetamodelGenerator >> defineTraits [
-
 	super defineTraits.
-
 	"From FAST"
 	tEntity := self remoteTrait: #TEntity withPrefix: #FAST.
-
 ]

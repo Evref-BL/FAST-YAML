@@ -9,8 +9,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLDirectiveName class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #DirectiveName super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]

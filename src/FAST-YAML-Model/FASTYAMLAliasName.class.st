@@ -9,8 +9,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLAliasName class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #AliasName super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]

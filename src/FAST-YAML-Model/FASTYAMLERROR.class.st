@@ -29,8 +29,8 @@ Class {
 { #category : 'meta' }
 FASTYAMLERROR class >> annotation [
 
+	<ignoreForCoverage>
 	<FMClass: #ERROR super: #FASTYAMLEntity>
 	<package: #'FAST-YAML-Model'>
 	<generated>
-	^ self
 ]
