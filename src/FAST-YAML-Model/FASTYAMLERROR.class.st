@@ -34,3 +34,14 @@ FASTYAMLERROR class >> annotation [
 	<package: #'FAST-YAML-Model'>
 	<generated>
 ]
+
+{ #category : 'accessing' }
+FASTYAMLERROR >> sourceText [
+
+	"^ self source"
+	
+	^ self source ifNil: [
+		  self parentNode
+			  ifNotNil: [ :parent | parent sourceText ]
+			  ifNil: [ '' ] ]
+]
