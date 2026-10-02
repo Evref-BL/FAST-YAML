@@ -1,6 +1,7 @@
 # FASTYAML  
 
 [![Coverage Status](https://coveralls.io/repos/github/Evref-BL/FAST-YAML/badge.svg?branch=main)](https://coveralls.io/github/Evref-BL/FAST-YAML?branch=main)
+[![CI](https://github.com/Evref-BL/FAST-YAML/actions/workflows/ci.yml/badge.svg)](https://github.com/Evref-BL/FAST-YAML/actions/workflows/ci.yml)
 
 FASTYAML is a recently created project that integrates with Moose and leverages the Tree-Sitter parser to analyze YAML source code in Pharo.  
 
