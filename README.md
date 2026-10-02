@@ -32,9 +32,7 @@ To use it in Pharo, you can check example below:
 res := FASTYAMLImporter new parse:  '---
 # A sample yaml example'. 
 ```  
-
-## NB
-
+ 
 ## NB
 
 The project is updated starting October 1 2026. It works on Moose 12+. The metamodel is complete following the description of tree sitter yaml original repo. 
