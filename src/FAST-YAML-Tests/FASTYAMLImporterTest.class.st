@@ -3585,96 +3585,151 @@ FASTYAMLImporterTest >> testGeneratedCompletelyEmptyFlowNodes [
 };'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '{
   ? foo :,
   : bar,
-}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '{
   ? foo :,
   : bar,
 }' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '{
+  ? foo :,
+  : bar,
+}' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '{
+  ? foo :,
+  : bar,
+}' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 2.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '? foo :'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'foo'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'foo'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'foo'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: ': bar'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'bar'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'bar'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'bar'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '{
-  ? foo :,
-  : bar,
-}' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '? foo :'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'foo'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'foo'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'foo'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: ': bar'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'bar'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'bar'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'bar'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '{
+  ? foo :,
+  : bar,
+};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -3691,7 +3746,9 @@ Integers: [ 0, 0o7, 0x3A, -19 ]
 Floats: [ 0., -0.0, .5, +12e03, -2E+05 ]
 Also floats: [ .inf, -.Inf, +.INF, .NAN ];'.
 
+	self assert: (fast allWithType: FASTYAMLBlockMapping) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 7.
+	self assert: (fast allWithType: FASTYAMLBlockNode) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLBooleanScalar) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLComment) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
@@ -3704,7 +3761,7 @@ Also floats: [ .inf, -.Inf, +.INF, .NAN ];'.
 	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 25.
 	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 7.
 
-	stack push: fast rootEntities anyOne.
+	stack push: fast rootEntities anyOne containedEntities first.
 	self assert: self topEntity sourceCode equals: 'A null: null
 Also a null: # Empty
 Not a null: ""
@@ -3712,700 +3769,698 @@ Booleans: [ true, True, false, FALSE ]
 Integers: [ 0, 0o7, 0x3A, -19 ]
 Floats: [ 0., -0.0, .5, +12e03, -2E+05 ]
 Also floats: [ .inf, -.Inf, +.INF, .NAN ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
-	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
-	self assert: (self topEntity isOfType: FamixTSourceAnchor).
+	self assert: (self topEntity isOfType: FASTYAMLBlockNode).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 8.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 1.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: 'A null: null'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'A null'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'A null'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'A null'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: 'null'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'null'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'null'.
-					self assert: (self topEntity isOfType: FASTYAMLNullScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: 'Also a null:'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Also a null'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Also a null'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Also a null'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 3).
-		self assert: self topEntity sourceCode equals: '# Empty'.
-		self assert: (self topEntity isOfType: FASTYAMLComment).
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 4).
-		self assert: self topEntity sourceCode equals: 'Not a null: ""'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Not a null'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Not a null'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Not a null'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '""'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '""'.
-				self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 5).
-		self assert: self topEntity sourceCode equals: 'Booleans: [ true, True, false, FALSE ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Booleans'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Booleans'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Booleans'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ true, True, false, FALSE ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ true, True, false, FALSE ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 4.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'true'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'true'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'true'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'True'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'True'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'True'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: 'false'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'false'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'false'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 4).
-					self assert: self topEntity sourceCode equals: 'FALSE'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'FALSE'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'FALSE'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 6).
-		self assert: self topEntity sourceCode equals: 'Integers: [ 0, 0o7, 0x3A, -19 ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Integers'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Integers'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Integers'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ 0, 0o7, 0x3A, -19 ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ 0, 0o7, 0x3A, -19 ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 4.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '0'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '0'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '0'.
-							self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: '0o7'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '0o7'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '0o7'.
-							self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: '0x3A'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '0x3A'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '0x3A'.
-							self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 4).
-					self assert: self topEntity sourceCode equals: '-19'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '-19'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '-19'.
-							self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 7).
-		self assert: self topEntity sourceCode equals: 'Floats: [ 0., -0.0, .5, +12e03, -2E+05 ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Floats'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Floats'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Floats'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ 0., -0.0, .5, +12e03, -2E+05 ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ 0., -0.0, .5, +12e03, -2E+05 ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 5.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '0.'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '0.'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '0.'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: '-0.0'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '-0.0'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '-0.0'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: '.5'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '.5'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '.5'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 4).
-					self assert: self topEntity sourceCode equals: '+12e03'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '+12e03'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '+12e03'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 5).
-					self assert: self topEntity sourceCode equals: '-2E+05'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '-2E+05'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '-2E+05'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 8).
-		self assert: self topEntity sourceCode equals: 'Also floats: [ .inf, -.Inf, +.INF, .NAN ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'Also floats'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Also floats'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'Also floats'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ .inf, -.Inf, +.INF, .NAN ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ .inf, -.Inf, +.INF, .NAN ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 4.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '.inf'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '.inf'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '.inf'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: '-.Inf'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '-.Inf'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '-.Inf'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: '+.INF'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '+.INF'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '+.INF'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 4).
-					self assert: self topEntity sourceCode equals: '.NAN'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '.NAN'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '.NAN'.
-							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	self assert: self topEntity source equals: 'A null: null
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: 'A null: null
 Also a null: # Empty
 Not a null: ""
 Booleans: [ true, True, false, FALSE ]
 Integers: [ 0, 0o7, 0x3A, -19 ]
 Floats: [ 0., -0.0, .5, +12e03, -2E+05 ]
-Also floats: [ .inf, -.Inf, +.INF, .NAN ];' withPlatformLineEndings
+Also floats: [ .inf, -.Inf, +.INF, .NAN ]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLBlockMapping).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 8.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: 'A null: null'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'A null'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'A null'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'A null'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: 'null'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'null'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'null'.
+						self assert: (self topEntity isOfType: FASTYAMLNullScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 2).
+			self assert: self topEntity sourceCode equals: 'Also a null:'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Also a null'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Also a null'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Also a null'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 3).
+			self assert: self topEntity sourceCode equals: '# Empty'.
+			self assert: (self topEntity isOfType: FASTYAMLComment).
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 4).
+			self assert: self topEntity sourceCode equals: 'Not a null: ""'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Not a null'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Not a null'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Not a null'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '""'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '""'.
+					self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 5).
+			self assert: self topEntity sourceCode equals: 'Booleans: [ true, True, false, FALSE ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Booleans'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Booleans'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Booleans'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ true, True, false, FALSE ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ true, True, false, FALSE ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 4.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'true'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'true'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'true'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: 'True'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'True'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'True'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 3).
+						self assert: self topEntity sourceCode equals: 'false'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'false'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'false'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 4).
+						self assert: self topEntity sourceCode equals: 'FALSE'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'FALSE'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'FALSE'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 6).
+			self assert: self topEntity sourceCode equals: 'Integers: [ 0, 0o7, 0x3A, -19 ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Integers'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Integers'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Integers'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ 0, 0o7, 0x3A, -19 ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ 0, 0o7, 0x3A, -19 ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 4.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '0'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '0'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '0'.
+								self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: '0o7'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '0o7'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '0o7'.
+								self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 3).
+						self assert: self topEntity sourceCode equals: '0x3A'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '0x3A'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '0x3A'.
+								self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 4).
+						self assert: self topEntity sourceCode equals: '-19'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '-19'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '-19'.
+								self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 7).
+			self assert: self topEntity sourceCode equals: 'Floats: [ 0., -0.0, .5, +12e03, -2E+05 ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Floats'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Floats'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Floats'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ 0., -0.0, .5, +12e03, -2E+05 ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ 0., -0.0, .5, +12e03, -2E+05 ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 5.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '0.'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '0.'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '0.'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: '-0.0'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '-0.0'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '-0.0'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 3).
+						self assert: self topEntity sourceCode equals: '.5'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '.5'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '.5'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 4).
+						self assert: self topEntity sourceCode equals: '+12e03'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '+12e03'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '+12e03'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 5).
+						self assert: self topEntity sourceCode equals: '-2E+05'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '-2E+05'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '-2E+05'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top childrenNodes at: 8).
+			self assert: self topEntity sourceCode equals: 'Also floats: [ .inf, -.Inf, +.INF, .NAN ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'Also floats'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'Also floats'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'Also floats'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ .inf, -.Inf, +.INF, .NAN ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ .inf, -.Inf, +.INF, .NAN ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 4.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '.inf'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '.inf'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '.inf'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: '-.Inf'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '-.Inf'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '-.Inf'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 3).
+						self assert: self topEntity sourceCode equals: '+.INF'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '+.INF'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '+.INF'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 4).
+						self assert: self topEntity sourceCode equals: '.NAN'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '.NAN'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '.NAN'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar)
 ]
 
 { #category : 'tests' }
@@ -4476,97 +4531,161 @@ FASTYAMLImporterTest >> testGeneratedDoubleQuotedImplicitKeys [
  ];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 2.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '"implicit block key" : [
   "implicit flow key" : value,
- ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+ ];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of monovalue relation key"
-	self assert: self topEntity key isNotNil.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
+	
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '"implicit block key" : [
+  "implicit flow key" : value,
+ ]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '"implicit block key" : [
+  "implicit flow key" : value,
+ ]' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-		stack push: self topEntity key.
-		self assert: self topEntity sourceCode equals: '"implicit block key"'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
-		
-			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '"implicit block key"'.
-			self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: '"implicit block key"'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '"implicit block key"'.
+					self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[
+  "implicit flow key" : value,
+ ]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[
+  "implicit flow key" : value,
+ ]' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '"implicit flow key" : value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: '"implicit flow key"'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: '"implicit flow key"'.
+								self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'value'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'value'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'value'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
 			stack pop.
 		stack pop.
 	
-	"Testing value of monovalue relation value"
-	self assert: self topEntity value isNotNil.
-
-		stack push: self topEntity value.
-		self assert: self topEntity sourceCode equals: '[
-  "implicit flow key" : value,
- ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[
-  "implicit flow key" : value,
- ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '"implicit flow key" : value'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '"implicit flow key"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '"implicit flow key"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'value'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'value'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'value'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '"implicit block key" : [
+  "implicit flow key" : value,
+ ];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -4587,11 +4706,14 @@ to a line feed, or 	\
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLEscapeSequence) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '"folded
 
 to a space,
@@ -4600,11 +4722,13 @@ to a space,
 
 to a line feed, or 	\
 
- \ 	non-content"' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+ \ 	non-content";' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '"folded
@@ -4616,12 +4740,14 @@ to a space,
 to a line feed, or 	\
 
  \ 	non-content"' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '"folded
 
 to a space,
@@ -4631,19 +4757,76 @@ to a space,
 to a line feed, or 	\
 
  \ 	non-content"' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '\'.
-				self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+				self assert: self topEntity sourceCode equals: '"folded
+
+to a space,
+
+
+
+to a line feed, or 	\
+
+ \ 	non-content"' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 2.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '\'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '\ '.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
 				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '\ '.
-				self assert: (self topEntity isOfType: FASTYAMLEscapeSequence)
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '"folded
+
+to a space,
+
+
+
+to a line feed, or 	\
+
+ \ 	non-content";' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -4661,20 +4844,25 @@ FASTYAMLImporterTest >> testGeneratedDoubleQuotedLines [
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '" 1st non-empty
 
 
 
  2nd non-empty
-	3rd non-empty "' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+	3rd non-empty ";' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '" 1st non-empty
@@ -4683,19 +4871,71 @@ FASTYAMLImporterTest >> testGeneratedDoubleQuotedLines [
 
  2nd non-empty
 	3rd non-empty "' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '" 1st non-empty
 
 
 
  2nd non-empty
 	3rd non-empty "' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar)
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '" 1st non-empty
+
+
+
+ 2nd non-empty
+	3rd non-empty "' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '" 1st non-empty
+
+
+
+ 2nd non-empty
+	3rd non-empty ";' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -4708,45 +4948,109 @@ FASTYAMLImporterTest >> testGeneratedDoublequoteNewlineEscape10 [
 b\
 c";'.
 
-	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 2.
 	self assert: (fast allWithType: FASTYAMLEscapeSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
 	stack push: fast rootEntities anyOne.
-	self assert: self topEntity sourceCode equals: 'root: "a\'.
+	self assert: self topEntity sourceCode equals: 'root: "a\
+b\
+c";' withPlatformLineEndings.
 	self assert: (self topEntity isOfType: FASTYAMLERROR).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 2.
+	self assert: self topEntity genericChildren size equals: 3.
 	
 		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: 'root'.
+		self assert: self topEntity sourceCode equals: 'root:'.
+		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		
+		"Testing value of monovalue relation key"
+		self assert: self topEntity key isNotNil.
+
+			stack push: self topEntity key.
+			self assert: self topEntity sourceCode equals: 'root'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: 'root'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: 'root'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top genericChildren at: 2).
+		self assert: self topEntity sourceCode equals: '"a\
+b\' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 2.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '\'.
+			self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: 'b\'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: 'b\'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: 'b\'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top genericChildren at: 3).
+		self assert: self topEntity sourceCode equals: 'c";'.
 		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: 'root'.
+			self assert: self topEntity sourceCode equals: 'c";'.
 			self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 			
 			"Testing value of monovalue relation childrenNode"
 			self assert: self topEntity childrenNode isNotNil.
 
 				stack push: self topEntity childrenNode.
-				self assert: self topEntity sourceCode equals: 'root'.
+				self assert: self topEntity sourceCode equals: 'c";'.
 				self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 				stack pop.
 			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '\'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
 		stack pop.
 	self assert: self topEntity source equals: 'root: "a\
 b\
@@ -4765,129 +5069,184 @@ FASTYAMLImporterTest >> testGeneratedEmptyContent [
 };'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLTag) size equals: 2.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '{
   foo : !!str,
   !!str : bar,
-}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '{
   foo : !!str,
   !!str : bar,
 }' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '{
+  foo : !!str,
+  !!str : bar,
+}' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '{
+  foo : !!str,
+  !!str : bar,
+}' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 2.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'foo : !!str'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'foo'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'foo'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'foo'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: '!!str'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '!!str'.
+							self assert: (self topEntity isOfType: FASTYAMLTag).
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '!!str : bar'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: '!!str'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '!!str'.
+							self assert: (self topEntity isOfType: FASTYAMLTag).
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'bar'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'bar'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'bar'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '{
-  foo : !!str,
-  !!str : bar,
-}' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'foo : !!str'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'foo'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'foo'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'foo'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: '!!str'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '!!str'.
-						self assert: (self topEntity isOfType: FASTYAMLTag).
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '!!str : bar'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '!!str'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '!!str'.
-						self assert: (self topEntity isOfType: FASTYAMLTag).
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'bar'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'bar'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'bar'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '{
+  foo : !!str,
+  !!str : bar,
+};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -5237,42 +5596,188 @@ FASTYAMLImporterTest >> testGeneratedEscapedCharacters [
 \  \_ \N \L \P
 \x41 \u0041 \U00000041";'.
 
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLEscapeSequence) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLEscapeSequence) size equals: 19.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '"Fun with \\
-\" \a \b \e' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+\" \a \b \e \f
+\n \r \t \v \0
+\  \_ \N \L \P
+\x41 \u0041 \U00000041";' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 5.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: '\\'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '"Fun with \\
+\" \a \b \e \f
+\n \r \t \v \0
+\  \_ \N \L \P
+\x41 \u0041 \U00000041"' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '"Fun with \\
+\" \a \b \e \f
+\n \r \t \v \0
+\  \_ \N \L \P
+\x41 \u0041 \U00000041"' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '"Fun with \\
+\" \a \b \e \f
+\n \r \t \v \0
+\  \_ \N \L \P
+\x41 \u0041 \U00000041"' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 19.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '\\'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '\"'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 3).
+					self assert: self topEntity sourceCode equals: '\a'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 4).
+					self assert: self topEntity sourceCode equals: '\b'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 5).
+					self assert: self topEntity sourceCode equals: '\e'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 6).
+					self assert: self topEntity sourceCode equals: '\f'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 7).
+					self assert: self topEntity sourceCode equals: '\n'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 8).
+					self assert: self topEntity sourceCode equals: '\r'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 9).
+					self assert: self topEntity sourceCode equals: '\t'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 10).
+					self assert: self topEntity sourceCode equals: '\v'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 11).
+					self assert: self topEntity sourceCode equals: '\0'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 12).
+					self assert: self topEntity sourceCode equals: '\ '.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 13).
+					self assert: self topEntity sourceCode equals: '\_'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 14).
+					self assert: self topEntity sourceCode equals: '\N'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 15).
+					self assert: self topEntity sourceCode equals: '\L'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 16).
+					self assert: self topEntity sourceCode equals: '\P'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 17).
+					self assert: self topEntity sourceCode equals: '\x41'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 18).
+					self assert: self topEntity sourceCode equals: '\u0041'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 19).
+					self assert: self topEntity sourceCode equals: '\U00000041'.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				stack pop.
+			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '\"'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 3).
-		self assert: self topEntity sourceCode equals: '\a'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 4).
-		self assert: self topEntity sourceCode equals: '\b'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 5).
-		self assert: self topEntity sourceCode equals: '\e'.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
 		stack pop.
 	self assert: self topEntity source equals: '"Fun with \\
 \" \a \b \e \f
@@ -6300,107 +6805,274 @@ FASTYAMLImporterTest >> testGeneratedFlowCollectionIndicators [
 mapping: { sky: blue, sea: green };'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 10.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 11.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 2.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 8.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 8.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 9.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 9.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: 'sequence: [ one, two, ]
-mapping: { sky: blue, sea: green }' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+mapping: { sky: blue, sea: green };' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 2.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: 'sequence: [ one, two, ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: 'sequence: [ one, two, ]
+mapping: { sky: blue, sea: green }' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 2.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: 'sequence: [ one, two, ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'sequence'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
+				stack push: self topEntity key.
 				self assert: self topEntity sourceCode equals: 'sequence'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
 					self assert: self topEntity sourceCode equals: 'sequence'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'sequence'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 2.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'one'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'one'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'one'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: 'two'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'two'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'two'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
 					stack pop.
 				stack pop.
 			stack pop.
 		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: 'mapping: { sky: blue, sea: green }'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ one, two, ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ one, two, ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'mapping'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
 				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 2.
+				self assert: self topEntity childrenNodes size equals: 1.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'one'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					self assert: self topEntity sourceCode equals: 'mapping'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'one'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
 
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'one'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'mapping'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 						stack pop.
 					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '{ sky: blue, sea: green }'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'two'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '{ sky: blue, sea: green }'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 					
 					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
+					self assert: self topEntity childrenNodes size equals: 2.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'two'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: self topEntity sourceCode equals: 'sky: blue'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
 
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'two'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'sky'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'sky'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'sky'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'blue'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'blue'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'blue'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: 'sea: green'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'sea'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'sea'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'sea'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'green'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'green'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'green'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
@@ -6408,155 +7080,30 @@ mapping: { sky: blue, sea: green }' withPlatformLineEndings.
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: 'mapping: { sky: blue, sea: green }'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'mapping'.
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'mapping'.
+				self assert: self topEntity sourceCode equals: ';'.
 				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
 				"Testing value of monovalue relation childrenNode"
 				self assert: self topEntity childrenNode isNotNil.
 
 					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'mapping'.
+					self assert: self topEntity sourceCode equals: ';'.
 					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '{ sky: blue, sea: green }'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '{ sky: blue, sea: green }'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 2.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'sky: blue'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-					
-					"Testing value of monovalue relation key"
-					self assert: self topEntity key isNotNil.
-
-						stack push: self topEntity key.
-						self assert: self topEntity sourceCode equals: 'sky'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'sky'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
-
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'sky'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-								stack pop.
-							stack pop.
-						stack pop.
-					
-					"Testing value of monovalue relation value"
-					self assert: self topEntity value isNotNil.
-
-						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'blue'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'blue'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
-
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'blue'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-								stack pop.
-							stack pop.
-						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'sea: green'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-					
-					"Testing value of monovalue relation key"
-					self assert: self topEntity key isNotNil.
-
-						stack push: self topEntity key.
-						self assert: self topEntity sourceCode equals: 'sea'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'sea'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
-
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'sea'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-								stack pop.
-							stack pop.
-						stack pop.
-					
-					"Testing value of monovalue relation value"
-					self assert: self topEntity value isNotNil.
-
-						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'green'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'green'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
-
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'green'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-								stack pop.
-							stack pop.
-						stack pop.
 					stack pop.
 				stack pop.
 			stack pop.
@@ -6849,23 +7396,26 @@ FASTYAMLImporterTest >> testGeneratedFlowMappingAdjacentValues [
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 7.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 3.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '{
 "adjacent":value,
 "readable": value,
 "empty":
-}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '{
@@ -6873,129 +7423,182 @@ FASTYAMLImporterTest >> testGeneratedFlowMappingAdjacentValues [
 "readable": value,
 "empty":
 }' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '{
 "adjacent":value,
 "readable": value,
 "empty":
 }' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 3.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '"adjacent":value'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: '{
+"adjacent":value,
+"readable": value,
+"empty":
+}' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 3.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '"adjacent":value'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '"adjacent"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: '"adjacent"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'value'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'value'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '"adjacent"'.
+							self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
 
-							stack push: self topEntity childrenNode.
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'value'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'value'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '"readable": value'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '"readable": value'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '"readable"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: '"readable"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '"readable"'.
+							self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'value'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'value'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
 						stack pop.
 					stack pop.
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+					stack push: (stack top childrenNodes at: 3).
+					self assert: self topEntity sourceCode equals: '"empty":'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'value'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'value'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: '"empty"'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'value'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '"empty"'.
+							self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
 							stack pop.
 						stack pop.
 					stack pop.
 				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
-				stack push: (stack top childrenNodes at: 3).
-				self assert: self topEntity sourceCode equals: '"empty":'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '"empty"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '"empty"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar)
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '{
+"adjacent":value,
+"readable": value,
+"empty":
+};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -7011,23 +7614,26 @@ implicit: entry,
 };'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 3.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 5.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '{
 ? explicit: entry,
 implicit: entry,
 ?
-}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '{
@@ -7035,131 +7641,182 @@ implicit: entry,
 implicit: entry,
 ?
 }' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '{
 ? explicit: entry,
 implicit: entry,
 ?
 }' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 3.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '? explicit: entry'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: '{
+? explicit: entry,
+implicit: entry,
+?
+}' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 3.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '? explicit: entry'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'explicit'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: 'explicit'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'explicit'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'explicit'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
 
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'entry'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity value.
 						self assert: self topEntity sourceCode equals: 'entry'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'entry'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'entry'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: 'implicit: entry'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: 'implicit: entry'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'implicit'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: 'implicit'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'implicit'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'implicit'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'entry'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'entry'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'entry'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'entry'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'entry'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'entry'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: (stack top childrenNodes at: 3).
+					self assert: self topEntity sourceCode equals: '?'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 					stack pop.
 				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
-				stack push: (stack top childrenNodes at: 3).
-				self assert: self topEntity sourceCode equals: '?'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair)
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '{
+? explicit: entry,
+implicit: entry,
+?
+};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -7177,24 +7834,27 @@ omitted value:,
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 7.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 3.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 5.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '{
 unquoted : "separate",
 http://foo.com,
 omitted value:,
 : omitted key,
-}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '{
@@ -7203,142 +7863,198 @@ http://foo.com,
 omitted value:,
 : omitted key,
 }' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '{
 unquoted : "separate",
 http://foo.com,
 omitted value:,
 : omitted key,
 }' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 4.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'unquoted : "separate"'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'unquoted'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'unquoted'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'unquoted'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: '"separate"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '"separate"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: 'http://foo.com'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				self assert: self topEntity sourceCode equals: '{
+unquoted : "separate",
+http://foo.com,
+omitted value:,
+: omitted key,
+}' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 				
 				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
+				self assert: self topEntity childrenNodes size equals: 4.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'http://foo.com'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					self assert: self topEntity sourceCode equals: 'unquoted : "separate"'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: 'http://foo.com'.
-						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'unquoted'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'unquoted'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'unquoted'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: '"separate"'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '"separate"'.
+							self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+							stack pop.
 						stack pop.
 					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 3).
-				self assert: self topEntity sourceCode equals: 'omitted value:'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'omitted value'.
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: 'http://foo.com'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'omitted value'.
+						self assert: self topEntity sourceCode equals: 'http://foo.com'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'omitted value'.
+							self assert: self topEntity sourceCode equals: 'http://foo.com'.
 							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 							stack pop.
 						stack pop.
 					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 4).
-				self assert: self topEntity sourceCode equals: ': omitted key'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+					stack push: (stack top childrenNodes at: 3).
+					self assert: self topEntity sourceCode equals: 'omitted value:'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'omitted key'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'omitted key'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'omitted value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'omitted value'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
 
-							stack push: self topEntity childrenNode.
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'omitted value'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 4).
+					self assert: self topEntity sourceCode equals: ': omitted key'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'omitted key'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'omitted key'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'omitted key'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '{
+unquoted : "separate",
+http://foo.com,
+omitted value:,
+: omitted key,
+};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -7351,67 +8067,202 @@ FASTYAMLImporterTest >> testGeneratedFlowMappings [
 - {five: six,seven : eight};'.
 
 	self assert: (fast allWithType: FASTYAMLBlockSequenceItem) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 10.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 11.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 4.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 8.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 8.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 9.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 9.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '- { one : two , three: four , }
-- {five: six,seven : eight}' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+- {five: six,seven : eight};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 2.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: '- { one : two , three: four , }'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '- { one : two , three: four , }
+- {five: six,seven : eight}' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 2.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '- { one : two , three: four , }'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
 
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '{ one : two , three: four , }'.
+				stack push: self topEntity childrenNode.
+				self assert: self topEntity sourceCode equals: '{ one : two , three: four , }'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '{ one : two , three: four , }'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 2.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'one : two'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'one'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'one'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'one'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'two'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'two'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'two'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: 'three: four'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'three'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'three'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'three'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'four'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'four'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'four'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: '{five: six,seven : eight}'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '{ one : two , three: four , }'.
+				self assert: self topEntity sourceCode equals: '{five: six,seven : eight}'.
 				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 				
 				"Testing value of multivalued relation childrenNodes"
 				self assert: self topEntity childrenNodes size equals: 2.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'one : two'.
+					self assert: self topEntity sourceCode equals: 'five: six'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 					
 					"Testing value of monovalue relation key"
 					self assert: self topEntity key isNotNil.
 
 						stack push: self topEntity key.
-						self assert: self topEntity sourceCode equals: 'one'.
+						self assert: self topEntity sourceCode equals: 'five'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'one'.
+							self assert: self topEntity sourceCode equals: 'five'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'one'.
+								self assert: self topEntity sourceCode equals: 'five'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
@@ -7421,21 +8272,21 @@ FASTYAMLImporterTest >> testGeneratedFlowMappings [
 					self assert: self topEntity value isNotNil.
 
 						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'two'.
+						self assert: self topEntity sourceCode equals: 'six'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'two'.
+							self assert: self topEntity sourceCode equals: 'six'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'two'.
+								self assert: self topEntity sourceCode equals: 'six'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
@@ -7443,28 +8294,28 @@ FASTYAMLImporterTest >> testGeneratedFlowMappings [
 					stack pop.
 				
 					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'three: four'.
+					self assert: self topEntity sourceCode equals: 'seven : eight'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 					
 					"Testing value of monovalue relation key"
 					self assert: self topEntity key isNotNil.
 
 						stack push: self topEntity key.
-						self assert: self topEntity sourceCode equals: 'three'.
+						self assert: self topEntity sourceCode equals: 'seven'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'three'.
+							self assert: self topEntity sourceCode equals: 'seven'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'three'.
+								self assert: self topEntity sourceCode equals: 'seven'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
@@ -7474,21 +8325,21 @@ FASTYAMLImporterTest >> testGeneratedFlowMappings [
 					self assert: self topEntity value isNotNil.
 
 						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'four'.
+						self assert: self topEntity sourceCode equals: 'eight'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'four'.
+							self assert: self topEntity sourceCode equals: 'eight'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'four'.
+								self assert: self topEntity sourceCode equals: 'eight'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
@@ -7498,123 +8349,30 @@ FASTYAMLImporterTest >> testGeneratedFlowMappings [
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '{five: six,seven : eight}'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '{five: six,seven : eight}'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'five: six'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'five'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'five'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'five'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'six'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'six'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'six'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: 'seven : eight'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'seven'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'seven'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'seven'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'eight'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'eight'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'eight'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
 			stack pop.
@@ -7821,80 +8579,151 @@ FASTYAMLImporterTest >> testGeneratedFlowSequence [
 - [three ,four];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockSequenceItem) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 7.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 5.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '- [ one, two, ]
-- [three ,four]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+- [three ,four];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 2.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: '- [ one, two, ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '- [ one, two, ]
+- [three ,four]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 2.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '- [ one, two, ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
 
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+				stack push: self topEntity childrenNode.
+				self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 2.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'one'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'one'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'one'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: 'two'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'two'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'two'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: '[three ,four]'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ one, two, ]'.
+				self assert: self topEntity sourceCode equals: '[three ,four]'.
 				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
 				"Testing value of multivalued relation childrenNodes"
 				self assert: self topEntity childrenNodes size equals: 2.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'one'.
+					self assert: self topEntity sourceCode equals: 'three'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'one'.
+						self assert: self topEntity sourceCode equals: 'three'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'one'.
+							self assert: self topEntity sourceCode equals: 'three'.
 							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 							stack pop.
 						stack pop.
 					stack pop.
 				
 					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'two'.
+					self assert: self topEntity sourceCode equals: 'four'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'two'.
+						self assert: self topEntity sourceCode equals: 'four'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'two'.
+							self assert: self topEntity sourceCode equals: 'four'.
 							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 							stack pop.
 						stack pop.
@@ -7903,59 +8732,30 @@ FASTYAMLImporterTest >> testGeneratedFlowSequence [
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '[three ,four]'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[three ,four]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'three'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'three'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: 'three'.
-						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: 'four'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'four'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
-
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: 'four'.
-						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
 			stack pop.
@@ -7981,15 +8781,16 @@ single: pair,
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 8.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 9.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 5.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '[
 "double
  quoted", ''single
@@ -7997,11 +8798,13 @@ single: pair,
 plain
  text, [ nested ],
 single: pair,
-]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '[
@@ -8012,12 +8815,14 @@ plain
  text, [ nested ],
 single: pair,
 ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '[
 "double
  quoted", ''single
@@ -8026,150 +8831,208 @@ plain
  text, [ nested ],
 single: pair,
 ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 5.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '"double
- quoted"' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				self assert: self topEntity sourceCode equals: '[
+"double
+ quoted", ''single
+           quoted'',
+plain
+ text, [ nested ],
+single: pair,
+]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
 				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
+				self assert: self topEntity childrenNodes size equals: 5.
 				
 					stack push: (stack top childrenNodes at: 1).
 					self assert: self topEntity sourceCode equals: '"double
  quoted"' withPlatformLineEndings.
-					self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '''single
-           quoted''' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '''single
-           quoted''' withPlatformLineEndings.
-					self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 3).
-				self assert: self topEntity sourceCode equals: 'plain
- text' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'plain
- text' withPlatformLineEndings.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
-
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: 'plain
- text' withPlatformLineEndings.
-						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 4).
-				self assert: self topEntity sourceCode equals: '[ nested ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '[ nested ]'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'nested'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						self assert: self topEntity sourceCode equals: '"double
+ quoted"' withPlatformLineEndings.
+						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '''single
+           quoted''' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '''single
+           quoted''' withPlatformLineEndings.
+						self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 3).
+					self assert: self topEntity sourceCode equals: 'plain
+ text' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'plain
+ text' withPlatformLineEndings.
+						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						
+						"Testing value of monovalue relation childrenNode"
+						self assert: self topEntity childrenNode isNotNil.
+
+							stack push: self topEntity childrenNode.
+							self assert: self topEntity sourceCode equals: 'plain
+ text' withPlatformLineEndings.
+							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 4).
+					self assert: self topEntity sourceCode equals: '[ nested ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '[ nested ]'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'nested'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'nested'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'nested'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 5).
+					self assert: self topEntity sourceCode equals: 'single: pair'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'single'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'single'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'nested'.
+								self assert: self topEntity sourceCode equals: 'single'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'pair'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'pair'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'pair'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
 				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
-				stack push: (stack top childrenNodes at: 5).
-				self assert: self topEntity sourceCode equals: 'single: pair'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'single'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'single'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'single'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'pair'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'pair'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'pair'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '[
+"double
+ quoted", ''single
+           quoted'',
+plain
+ text, [ nested ],
+single: pair,
+];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -10398,137 +11261,190 @@ FASTYAMLImporterTest >> testGeneratedInvalidImplicitKeys [
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 6.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 2.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '[ foo
  bar: invalid,
- "foo...>1K characters...bar": invalid ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+ "foo...>1K characters...bar": invalid ];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '[ foo
  bar: invalid,
  "foo...>1K characters...bar": invalid ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '[ foo
+ bar: invalid,
+ "foo...>1K characters...bar": invalid ]' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '[ foo
+ bar: invalid,
+ "foo...>1K characters...bar": invalid ]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 2.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'foo
+ bar: invalid' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: 'foo
+ bar' withPlatformLineEndings.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'foo
+ bar' withPlatformLineEndings.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'foo
+ bar' withPlatformLineEndings.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'invalid'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'invalid'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'invalid'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				
+					stack push: (stack top childrenNodes at: 2).
+					self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar": invalid'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
+
+						stack push: self topEntity key.
+						self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar"'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar"'.
+							self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'invalid'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'invalid'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'invalid'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[ foo
- bar: invalid,
- "foo...>1K characters...bar": invalid ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 2.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'foo
- bar: invalid' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'foo
- bar' withPlatformLineEndings.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'foo
- bar' withPlatformLineEndings.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'foo
- bar' withPlatformLineEndings.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'invalid'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'invalid'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'invalid'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar": invalid'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar"'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '"foo...>1K characters...bar"'.
-						self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'invalid'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'invalid'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'invalid'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '[ foo
+ bar: invalid,
+ "foo...>1K characters...bar": invalid ];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -11383,88 +12299,123 @@ FASTYAMLImporterTest >> testGeneratedLongStringScalarSCHARMAXInLength [
   abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!:
     {};'.
 
-	self assert: (fast allWithType: FASTYAMLBlockMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLBlockNode) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: 'long:
-  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!:
+    {};' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: 'long:
-  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLBlockNode).
+  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!:
+    {}' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 3.
 		
-			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: 'long:
-  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLBlockMapping).
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: 'long'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'long:
-  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+				self assert: self topEntity sourceCode equals: 'long'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
+					stack push: self topEntity childrenNode.
 					self assert: self topEntity sourceCode equals: 'long'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'long'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'long'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity value.
+					stack push: self topEntity childrenNode.
 					self assert: self topEntity sourceCode equals: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 3).
+			self assert: self topEntity sourceCode equals: '{}'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '{}'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: 'long:
+  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdef1234567890!@#$%^&*()_+{}|:"<>?`-=[]\;'',./almostat128chars!:
+    {};' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -13226,185 +14177,228 @@ string: ''012345'';'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLBooleanScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 7.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 8.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLNullScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 6.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: 'null:
 booleans: [ true, false ]
-string: ''012345''' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+string: ''012345'';' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 3.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: 'null:'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: 'null:
+booleans: [ true, false ]
+string: ''012345''' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 3.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: 'null:'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'null'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
+				stack push: self topEntity key.
 				self assert: self topEntity sourceCode equals: 'null'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'null'.
-					self assert: (self topEntity isOfType: FASTYAMLNullScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: 'booleans: [ true, false ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
-		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'booleans'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'booleans'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'booleans'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '[ true, false ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ true, false ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
 				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 2.
+				self assert: self topEntity childrenNodes size equals: 1.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'true'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					self assert: self topEntity sourceCode equals: 'null'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'null'.
+						self assert: (self topEntity isOfType: FASTYAMLNullScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: 'booleans: [ true, false ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'booleans'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'booleans'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'booleans'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[ true, false ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ true, false ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 					
 					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
+					self assert: self topEntity childrenNodes size equals: 2.
 					
 						stack push: (stack top childrenNodes at: 1).
 						self assert: self topEntity sourceCode equals: 'true'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'true'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'true'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
 							stack pop.
 						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'false'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: (stack top childrenNodes at: 2).
 						self assert: self topEntity sourceCode equals: 'false'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'false'.
-							self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'false'.
+								self assert: (self topEntity isOfType: FASTYAMLBooleanScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
 				stack pop.
 			stack pop.
+		
+			stack push: (stack top genericChildren at: 3).
+			self assert: self topEntity sourceCode equals: 'string: ''012345'''.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
+
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'string'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'string'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'string'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '''012345'''.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '''012345'''.
+					self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+					stack pop.
+				stack pop.
+			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 3).
-		self assert: self topEntity sourceCode equals: 'string: ''012345'''.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'string'.
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'string'.
+				self assert: self topEntity sourceCode equals: ';'.
 				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
 				"Testing value of monovalue relation childrenNode"
 				self assert: self topEntity childrenNode isNotNil.
 
 					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'string'.
+					self assert: self topEntity sourceCode equals: ';'.
 					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '''012345'''.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '''012345'''.
-				self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
 				stack pop.
 			stack pop.
 		stack pop.
@@ -14732,112 +15726,176 @@ FASTYAMLImporterTest >> testGeneratedPlainImplicitKeys [
  ];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 4.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: 'implicit block key : [
   implicit flow key : value,
- ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+ ];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of monovalue relation key"
-	self assert: self topEntity key isNotNil.
-
-		stack push: self topEntity key.
-		self assert: self topEntity sourceCode equals: 'implicit block key'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
+	
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: 'implicit block key : [
+  implicit flow key : value,
+ ]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: 'implicit block key'.
-			self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: 'implicit block key : [
+  implicit flow key : value,
+ ]' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
 			
-			"Testing value of monovalue relation childrenNode"
-			self assert: self topEntity childrenNode isNotNil.
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-				stack push: self topEntity childrenNode.
+				stack push: self topEntity key.
 				self assert: self topEntity sourceCode equals: 'implicit block key'.
-				self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'implicit block key'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'implicit block key'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[
+  implicit flow key : value,
+ ]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[
+  implicit flow key : value,
+ ]' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'implicit flow key : value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'implicit flow key'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'implicit flow key'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'implicit flow key'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'value'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'value'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'value'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
 				stack pop.
 			stack pop.
 		stack pop.
 	
-	"Testing value of monovalue relation value"
-	self assert: self topEntity value isNotNil.
-
-		stack push: self topEntity value.
-		self assert: self topEntity sourceCode equals: '[
-  implicit flow key : value,
- ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[
-  implicit flow key : value,
- ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'implicit flow key : value'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'implicit flow key'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'implicit flow key'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'implicit flow key'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'value'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'value'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'value'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: 'implicit block key : [
+  implicit flow key : value,
+ ];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -14915,109 +15973,151 @@ FASTYAMLImporterTest >> testGeneratedQuotedScalarIndicators [
 double: "text";'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLDoubleQuoteScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: 'single: ''text''
-double: "text"' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+double: "text";' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 2.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: 'single: ''text'''.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: 'single: ''text''
+double: "text"' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 2.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: 'single: ''text'''.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'single'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
+				stack push: self topEntity key.
 				self assert: self topEntity sourceCode equals: 'single'.
-				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
-				"Testing value of monovalue relation childrenNode"
-				self assert: self topEntity childrenNode isNotNil.
-
-					stack push: self topEntity childrenNode.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
 					self assert: self topEntity sourceCode equals: 'single'.
-					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'single'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '''text'''.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '''text'''.
+					self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
 					stack pop.
 				stack pop.
 			stack pop.
 		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: 'double: "text"'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '''text'''.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: 'double'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'double'.
+					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+					
+					"Testing value of monovalue relation childrenNode"
+					self assert: self topEntity childrenNode isNotNil.
+
+						stack push: self topEntity childrenNode.
+						self assert: self topEntity sourceCode equals: 'double'.
+						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+						stack pop.
+					stack pop.
+				stack pop.
 			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '''text'''.
-				self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '"text"'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '"text"'.
+					self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
+					stack pop.
 				stack pop.
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: 'double: "text"'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
-		"Testing value of monovalue relation key"
-		self assert: self topEntity key isNotNil.
-
-			stack push: self topEntity key.
-			self assert: self topEntity sourceCode equals: 'double'.
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'double'.
+				self assert: self topEntity sourceCode equals: ';'.
 				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
 				"Testing value of monovalue relation childrenNode"
 				self assert: self topEntity childrenNode isNotNil.
 
 					stack push: self topEntity childrenNode.
-					self assert: self topEntity sourceCode equals: 'double'.
+					self assert: self topEntity sourceCode equals: ';'.
 					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				stack pop.
-			stack pop.
-		
-		"Testing value of monovalue relation value"
-		self assert: self topEntity value isNotNil.
-
-			stack push: self topEntity value.
-			self assert: self topEntity sourceCode equals: '"text"'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '"text"'.
-				self assert: (self topEntity isOfType: FASTYAMLDoubleQuoteScalar).
 				stack pop.
 			stack pop.
 		stack pop.
@@ -16302,191 +17402,284 @@ FASTYAMLImporterTest >> testGeneratedSequenceOfSequences [
 - [Sammy Sosa  , 63, 0.288];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockSequenceItem) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFloatScalar) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 12.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 13.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLIntegerScalar) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 9.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 5.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 10.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 6.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '- [name        , hr, avg  ]
 - [Mark McGwire, 65, 0.278]
-- [Sammy Sosa  , 63, 0.288]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+- [Sammy Sosa  , 63, 0.288];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 3.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: '- [name        , hr, avg  ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '- [name        , hr, avg  ]
+- [Mark McGwire, 65, 0.278]
+- [Sammy Sosa  , 63, 0.288]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 3.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '- [name        , hr, avg  ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
 
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '[name        , hr, avg  ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
+				stack push: self topEntity childrenNode.
 				self assert: self topEntity sourceCode equals: '[name        , hr, avg  ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 				
 				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 3.
+				self assert: self topEntity childrenNodes size equals: 1.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'name'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+					self assert: self topEntity sourceCode equals: '[name        , hr, avg  ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 					
 					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
+					self assert: self topEntity childrenNodes size equals: 3.
 					
 						stack push: (stack top childrenNodes at: 1).
 						self assert: self topEntity sourceCode equals: 'name'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'name'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'name'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: 'hr'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: (stack top childrenNodes at: 2).
 						self assert: self topEntity sourceCode equals: 'hr'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'hr'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'hr'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
-					stack pop.
-				
-					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: 'avg'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: (stack top childrenNodes at: 3).
 						self assert: self topEntity sourceCode equals: 'avg'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'avg'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'avg'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
 				stack pop.
 			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '- [Mark McGwire, 65, 0.278]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: '- [Mark McGwire, 65, 0.278]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
 
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '[Mark McGwire, 65, 0.278]'.
+				stack push: self topEntity childrenNode.
+				self assert: self topEntity sourceCode equals: '[Mark McGwire, 65, 0.278]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[Mark McGwire, 65, 0.278]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 3.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 2).
+						self assert: self topEntity sourceCode equals: '65'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '65'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '65'.
+								self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+						stack push: (stack top childrenNodes at: 3).
+						self assert: self topEntity sourceCode equals: '0.278'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: '0.278'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: '0.278'.
+								self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 3).
+			self assert: self topEntity sourceCode equals: '[Sammy Sosa  , 63, 0.288]'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[Mark McGwire, 65, 0.278]'.
+				self assert: self topEntity sourceCode equals: '[Sammy Sosa  , 63, 0.288]'.
 				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
 				"Testing value of multivalued relation childrenNodes"
 				self assert: self topEntity childrenNodes size equals: 3.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+					self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+						self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'Mark McGwire'.
+							self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
 							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 							stack pop.
 						stack pop.
 					stack pop.
 				
 					stack push: (stack top childrenNodes at: 2).
-					self assert: self topEntity sourceCode equals: '65'.
+					self assert: self topEntity sourceCode equals: '63'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '65'.
+						self assert: self topEntity sourceCode equals: '63'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '65'.
+							self assert: self topEntity sourceCode equals: '63'.
 							self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
 							stack pop.
 						stack pop.
 					stack pop.
 				
 					stack push: (stack top childrenNodes at: 3).
-					self assert: self topEntity sourceCode equals: '0.278'.
+					self assert: self topEntity sourceCode equals: '0.288'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 					
 					"Testing value of multivalued relation childrenNodes"
 					self assert: self topEntity childrenNodes size equals: 1.
 					
 						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '0.278'.
+						self assert: self topEntity sourceCode equals: '0.288'.
 						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 						
 						"Testing value of monovalue relation childrenNode"
 						self assert: self topEntity childrenNode isNotNil.
 
 							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: '0.278'.
+							self assert: self topEntity sourceCode equals: '0.288'.
 							self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
 							stack pop.
 						stack pop.
@@ -16495,80 +17688,30 @@ FASTYAMLImporterTest >> testGeneratedSequenceOfSequences [
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 3).
-		self assert: self topEntity sourceCode equals: '[Sammy Sosa  , 63, 0.288]'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[Sammy Sosa  , 63, 0.288]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 3.
+			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: 'Sammy Sosa'.
-						self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 2).
-				self assert: self topEntity sourceCode equals: '63'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '63'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
-
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: '63'.
-						self assert: (self topEntity isOfType: FASTYAMLIntegerScalar).
-						stack pop.
-					stack pop.
-				stack pop.
-			
-				stack push: (stack top childrenNodes at: 3).
-				self assert: self topEntity sourceCode equals: '0.288'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: '0.288'.
-					self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-					
-					"Testing value of monovalue relation childrenNode"
-					self assert: self topEntity childrenNode isNotNil.
-
-						stack push: self topEntity childrenNode.
-						self assert: self topEntity sourceCode equals: '0.288'.
-						self assert: (self topEntity isOfType: FASTYAMLFloatScalar).
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
 			stack pop.
@@ -16590,95 +17733,150 @@ FASTYAMLImporterTest >> testGeneratedSinglePairExplicitEntry [
 ];'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '[
 ? foo
  bar : baz
-]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '[
 ? foo
  bar : baz
 ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '[
 ? foo
  bar : baz
 ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '? foo
- bar : baz' withPlatformLineEndings.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: '[
+? foo
+ bar : baz
+]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '? foo
+ bar : baz' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'foo
- bar' withPlatformLineEndings.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: 'foo
  bar' withPlatformLineEndings.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'foo
  bar' withPlatformLineEndings.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'foo
+ bar' withPlatformLineEndings.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'baz'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'baz'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'baz'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'baz'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'baz'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'baz'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '[
+? foo
+ bar : baz
+];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -16692,88 +17890,141 @@ foo: bar
 ];'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 3.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 3.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 3.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '[
 foo: bar
-]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: '[
 foo: bar
 ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: '[
 foo: bar
 ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: 'foo: bar'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: '[
+foo: bar
+]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: 'foo: bar'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+					
+					"Testing value of monovalue relation key"
+					self assert: self topEntity key isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: 'foo'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
+						stack push: self topEntity key.
 						self assert: self topEntity sourceCode equals: 'foo'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
 							self assert: self topEntity sourceCode equals: 'foo'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'foo'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
+							stack pop.
+						stack pop.
+					
+					"Testing value of monovalue relation value"
+					self assert: self topEntity value isNotNil.
+
+						stack push: self topEntity value.
+						self assert: self topEntity sourceCode equals: 'bar'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+						
+						"Testing value of multivalued relation childrenNodes"
+						self assert: self topEntity childrenNodes size equals: 1.
+						
+							stack push: (stack top childrenNodes at: 1).
+							self assert: self topEntity sourceCode equals: 'bar'.
+							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							
+							"Testing value of monovalue relation childrenNode"
+							self assert: self topEntity childrenNode isNotNil.
+
+								stack push: self topEntity childrenNode.
+								self assert: self topEntity sourceCode equals: 'bar'.
+								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+								stack pop.
 							stack pop.
 						stack pop.
 					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'bar'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'bar'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'bar'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '[
+foo: bar
+];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -16787,70 +18038,254 @@ FASTYAMLImporterTest >> testGeneratedSinglePairImplicitEntries [
 - [ {JSON: like}:adjacent ];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockSequenceItem) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowMapping) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 10.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 11.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 4.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 3.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 6.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 6.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 7.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 7.
 
 	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '- [ YAML : separate ]
 - [ : empty key entry ]
-- [ {JSON: like}:adjacent ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLERROR).
+- [ {JSON: like}:adjacent ];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
 	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
 	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of multivalued relation genericChildren"
-	self assert: self topEntity genericChildren size equals: 3.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
 	
-		stack push: (stack top genericChildren at: 1).
-		self assert: self topEntity sourceCode equals: '- [ YAML : separate ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '- [ YAML : separate ]
+- [ : empty key entry ]
+- [ {JSON: like}:adjacent ]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 3.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '- [ YAML : separate ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
 
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '[ YAML : separate ]'.
+				stack push: self topEntity childrenNode.
+				self assert: self topEntity sourceCode equals: '[ YAML : separate ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ YAML : separate ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: 'YAML : separate'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: 'YAML'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'YAML'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'YAML'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'separate'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'separate'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'separate'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 2).
+			self assert: self topEntity sourceCode equals: '- [ : empty key entry ]'.
+			self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+			
+			"Testing value of monovalue relation childrenNode"
+			self assert: self topEntity childrenNode isNotNil.
+
+				stack push: self topEntity childrenNode.
+				self assert: self topEntity sourceCode equals: '[ : empty key entry ]'.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[ : empty key entry ]'.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: ': empty key entry'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'empty key entry'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'empty key entry'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'empty key entry'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
+			stack pop.
+		
+			stack push: (stack top genericChildren at: 3).
+			self assert: self topEntity sourceCode equals: '[ {JSON: like}:adjacent ]'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ YAML : separate ]'.
+				self assert: self topEntity sourceCode equals: '[ {JSON: like}:adjacent ]'.
 				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
 				
 				"Testing value of multivalued relation childrenNodes"
 				self assert: self topEntity childrenNodes size equals: 1.
 				
 					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: 'YAML : separate'.
+					self assert: self topEntity sourceCode equals: '{JSON: like}:adjacent'.
 					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
 					
 					"Testing value of monovalue relation key"
 					self assert: self topEntity key isNotNil.
 
 						stack push: self topEntity key.
-						self assert: self topEntity sourceCode equals: 'YAML'.
+						self assert: self topEntity sourceCode equals: '{JSON: like}'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'YAML'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+							self assert: self topEntity sourceCode equals: '{JSON: like}'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
 							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'JSON: like'.
+								self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+								
+								"Testing value of monovalue relation key"
+								self assert: self topEntity key isNotNil.
 
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'YAML'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack push: self topEntity key.
+									self assert: self topEntity sourceCode equals: 'JSON'.
+									self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+									
+									"Testing value of multivalued relation childrenNodes"
+									self assert: self topEntity childrenNodes size equals: 1.
+									
+										stack push: (stack top childrenNodes at: 1).
+										self assert: self topEntity sourceCode equals: 'JSON'.
+										self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+										
+										"Testing value of monovalue relation childrenNode"
+										self assert: self topEntity childrenNode isNotNil.
+
+											stack push: self topEntity childrenNode.
+											self assert: self topEntity sourceCode equals: 'JSON'.
+											self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+											stack pop.
+										stack pop.
+									stack pop.
+								
+								"Testing value of monovalue relation value"
+								self assert: self topEntity value isNotNil.
+
+									stack push: self topEntity value.
+									self assert: self topEntity sourceCode equals: 'like'.
+									self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+									
+									"Testing value of multivalued relation childrenNodes"
+									self assert: self topEntity childrenNodes size equals: 1.
+									
+										stack push: (stack top childrenNodes at: 1).
+										self assert: self topEntity sourceCode equals: 'like'.
+										self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+										
+										"Testing value of monovalue relation childrenNode"
+										self assert: self topEntity childrenNode isNotNil.
+
+											stack push: self topEntity childrenNode.
+											self assert: self topEntity sourceCode equals: 'like'.
+											self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+											stack pop.
+										stack pop.
+									stack pop.
 								stack pop.
 							stack pop.
 						stack pop.
@@ -16859,21 +18294,21 @@ FASTYAMLImporterTest >> testGeneratedSinglePairImplicitEntries [
 					self assert: self topEntity value isNotNil.
 
 						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'separate'.
+						self assert: self topEntity sourceCode equals: 'adjacent'.
 						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 						
 						"Testing value of multivalued relation childrenNodes"
 						self assert: self topEntity childrenNodes size equals: 1.
 						
 							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'separate'.
+							self assert: self topEntity sourceCode equals: 'adjacent'.
 							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 							
 							"Testing value of monovalue relation childrenNode"
 							self assert: self topEntity childrenNode isNotNil.
 
 								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'separate'.
+								self assert: self topEntity sourceCode equals: 'adjacent'.
 								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 								stack pop.
 							stack pop.
@@ -16883,171 +18318,30 @@ FASTYAMLImporterTest >> testGeneratedSinglePairImplicitEntries [
 			stack pop.
 		stack pop.
 	
-		stack push: (stack top genericChildren at: 2).
-		self assert: self topEntity sourceCode equals: '- [ : empty key entry ]'.
-		self assert: (self topEntity isOfType: FASTYAMLBlockSequenceItem).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
-		"Testing value of monovalue relation childrenNode"
-		self assert: self topEntity childrenNode isNotNil.
-
-			stack push: self topEntity childrenNode.
-			self assert: self topEntity sourceCode equals: '[ : empty key entry ]'.
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
 			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '[ : empty key entry ]'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of multivalued relation childrenNodes"
-				self assert: self topEntity childrenNodes size equals: 1.
-				
-					stack push: (stack top childrenNodes at: 1).
-					self assert: self topEntity sourceCode equals: ': empty key entry'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-					
-					"Testing value of monovalue relation value"
-					self assert: self topEntity value isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-						stack push: self topEntity value.
-						self assert: self topEntity sourceCode equals: 'empty key entry'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'empty key entry'.
-							self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-							
-							"Testing value of monovalue relation childrenNode"
-							self assert: self topEntity childrenNode isNotNil.
-
-								stack push: self topEntity childrenNode.
-								self assert: self topEntity sourceCode equals: 'empty key entry'.
-								self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-								stack pop.
-							stack pop.
-						stack pop.
-					stack pop.
-				stack pop.
-			stack pop.
-		stack pop.
-	
-		stack push: (stack top genericChildren at: 3).
-		self assert: self topEntity sourceCode equals: '[ {JSON: like}:adjacent ]'.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
-		
-			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[ {JSON: like}:adjacent ]'.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
-			
-			"Testing value of multivalued relation childrenNodes"
-			self assert: self topEntity childrenNodes size equals: 1.
-			
-				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '{JSON: like}:adjacent'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
-
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '{JSON: like}'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '{JSON: like}'.
-						self assert: (self topEntity isOfType: FASTYAMLFlowMapping).
-						
-						"Testing value of multivalued relation childrenNodes"
-						self assert: self topEntity childrenNodes size equals: 1.
-						
-							stack push: (stack top childrenNodes at: 1).
-							self assert: self topEntity sourceCode equals: 'JSON: like'.
-							self assert: (self topEntity isOfType: FASTYAMLFlowPair).
-							
-							"Testing value of monovalue relation key"
-							self assert: self topEntity key isNotNil.
-
-								stack push: self topEntity key.
-								self assert: self topEntity sourceCode equals: 'JSON'.
-								self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-								
-								"Testing value of multivalued relation childrenNodes"
-								self assert: self topEntity childrenNodes size equals: 1.
-								
-									stack push: (stack top childrenNodes at: 1).
-									self assert: self topEntity sourceCode equals: 'JSON'.
-									self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-									
-									"Testing value of monovalue relation childrenNode"
-									self assert: self topEntity childrenNode isNotNil.
-
-										stack push: self topEntity childrenNode.
-										self assert: self topEntity sourceCode equals: 'JSON'.
-										self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-										stack pop.
-									stack pop.
-								stack pop.
-							
-							"Testing value of monovalue relation value"
-							self assert: self topEntity value isNotNil.
-
-								stack push: self topEntity value.
-								self assert: self topEntity sourceCode equals: 'like'.
-								self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-								
-								"Testing value of multivalued relation childrenNodes"
-								self assert: self topEntity childrenNodes size equals: 1.
-								
-									stack push: (stack top childrenNodes at: 1).
-									self assert: self topEntity sourceCode equals: 'like'.
-									self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-									
-									"Testing value of monovalue relation childrenNode"
-									self assert: self topEntity childrenNode isNotNil.
-
-										stack push: self topEntity childrenNode.
-										self assert: self topEntity sourceCode equals: 'like'.
-										self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-										stack pop.
-									stack pop.
-								stack pop.
-							stack pop.
-						stack pop.
-					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'adjacent'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'adjacent'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'adjacent'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar).
-							stack pop.
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
 				stack pop.
 			stack pop.
@@ -17065,20 +18359,84 @@ FASTYAMLImporterTest >> testGeneratedSingleQuotedCharacters [
 
 	self parse: '''here''''s to "quotes"'';'.
 
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLEscapeSequence) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
 
-	stack push: fast rootEntities anyOne containedEntities first.
-	self assert: self topEntity sourceCode equals: '''here''''s to "quotes"'''.
-	self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+	stack push: fast rootEntities anyOne.
+	self assert: self topEntity sourceCode equals: '''here''''s to "quotes"'';'.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
-		self assert: self topEntity sourceCode equals: ''''''.
-		self assert: (self topEntity isOfType: FASTYAMLEscapeSequence)
+		self assert: self topEntity sourceCode equals: '''here''''s to "quotes"'''.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '''here''''s to "quotes"'''.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: '''here''''s to "quotes"'''.
+				self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: ''''''.
+					self assert: (self topEntity isOfType: FASTYAMLEscapeSequence).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '''here''''s to "quotes"'';'
 ]
 
 { #category : 'tests' }
@@ -17092,97 +18450,161 @@ FASTYAMLImporterTest >> testGeneratedSingleQuotedImplicitKeys [
  ];'.
 
 	self assert: (fast allWithType: FASTYAMLBlockMappingPair) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 4.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 5.
 	self assert: (fast allWithType: FASTYAMLFlowPair) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLFlowSequence) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 2.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 2.
-	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 2.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: '''implicit block key'' : [
   ''implicit flow key'' : value,
- ]' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+ ];' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
-	"Testing value of monovalue relation key"
-	self assert: self topEntity key isNotNil.
+	"Testing value of multivalued relation childrenNodes"
+	self assert: self topEntity childrenNodes size equals: 2.
+	
+		stack push: (stack top childrenNodes at: 1).
+		self assert: self topEntity sourceCode equals: '''implicit block key'' : [
+  ''implicit flow key'' : value,
+ ]' withPlatformLineEndings.
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
+		
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
+		
+			stack push: (stack top genericChildren at: 1).
+			self assert: self topEntity sourceCode equals: '''implicit block key'' : [
+  ''implicit flow key'' : value,
+ ]' withPlatformLineEndings.
+			self assert: (self topEntity isOfType: FASTYAMLBlockMappingPair).
+			
+			"Testing value of monovalue relation key"
+			self assert: self topEntity key isNotNil.
 
-		stack push: self topEntity key.
-		self assert: self topEntity sourceCode equals: '''implicit block key'''.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
-		
-			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '''implicit block key'''.
-			self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+				stack push: self topEntity key.
+				self assert: self topEntity sourceCode equals: '''implicit block key'''.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '''implicit block key'''.
+					self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+					stack pop.
+				stack pop.
+			
+			"Testing value of monovalue relation value"
+			self assert: self topEntity value isNotNil.
+
+				stack push: self topEntity value.
+				self assert: self topEntity sourceCode equals: '[
+  ''implicit flow key'' : value,
+ ]' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+				
+				"Testing value of multivalued relation childrenNodes"
+				self assert: self topEntity childrenNodes size equals: 1.
+				
+					stack push: (stack top childrenNodes at: 1).
+					self assert: self topEntity sourceCode equals: '[
+  ''implicit flow key'' : value,
+ ]' withPlatformLineEndings.
+					self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+					
+					"Testing value of multivalued relation childrenNodes"
+					self assert: self topEntity childrenNodes size equals: 1.
+					
+						stack push: (stack top childrenNodes at: 1).
+						self assert: self topEntity sourceCode equals: '''implicit flow key'' : value'.
+						self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+						
+						"Testing value of monovalue relation key"
+						self assert: self topEntity key isNotNil.
+
+							stack push: self topEntity key.
+							self assert: self topEntity sourceCode equals: '''implicit flow key'''.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: '''implicit flow key'''.
+								self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+								stack pop.
+							stack pop.
+						
+						"Testing value of monovalue relation value"
+						self assert: self topEntity value isNotNil.
+
+							stack push: self topEntity value.
+							self assert: self topEntity sourceCode equals: 'value'.
+							self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+							
+							"Testing value of multivalued relation childrenNodes"
+							self assert: self topEntity childrenNodes size equals: 1.
+							
+								stack push: (stack top childrenNodes at: 1).
+								self assert: self topEntity sourceCode equals: 'value'.
+								self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+								
+								"Testing value of monovalue relation childrenNode"
+								self assert: self topEntity childrenNode isNotNil.
+
+									stack push: self topEntity childrenNode.
+									self assert: self topEntity sourceCode equals: 'value'.
+									self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+									stack pop.
+								stack pop.
+							stack pop.
+						stack pop.
+					stack pop.
+				stack pop.
 			stack pop.
 		stack pop.
 	
-	"Testing value of monovalue relation value"
-	self assert: self topEntity value isNotNil.
-
-		stack push: self topEntity value.
-		self assert: self topEntity sourceCode equals: '[
-  ''implicit flow key'' : value,
- ]' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
 		
 		"Testing value of multivalued relation childrenNodes"
 		self assert: self topEntity childrenNodes size equals: 1.
 		
 			stack push: (stack top childrenNodes at: 1).
-			self assert: self topEntity sourceCode equals: '[
-  ''implicit flow key'' : value,
- ]' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLFlowSequence).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
 			
 			"Testing value of multivalued relation childrenNodes"
 			self assert: self topEntity childrenNodes size equals: 1.
 			
 				stack push: (stack top childrenNodes at: 1).
-				self assert: self topEntity sourceCode equals: '''implicit flow key'' : value'.
-				self assert: (self topEntity isOfType: FASTYAMLFlowPair).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
 				
-				"Testing value of monovalue relation key"
-				self assert: self topEntity key isNotNil.
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
 
-					stack push: self topEntity key.
-					self assert: self topEntity sourceCode equals: '''implicit flow key'''.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: '''implicit flow key'''.
-						self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
-						stack pop.
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
 					stack pop.
-				
-				"Testing value of monovalue relation value"
-				self assert: self topEntity value isNotNil.
-
-					stack push: self topEntity value.
-					self assert: self topEntity sourceCode equals: 'value'.
-					self assert: (self topEntity isOfType: FASTYAMLFlowNode).
-					
-					"Testing value of multivalued relation childrenNodes"
-					self assert: self topEntity childrenNodes size equals: 1.
-					
-						stack push: (stack top childrenNodes at: 1).
-						self assert: self topEntity sourceCode equals: 'value'.
-						self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
-						
-						"Testing value of monovalue relation childrenNode"
-						self assert: self topEntity childrenNode isNotNil.
-
-							stack push: self topEntity childrenNode.
-							self assert: self topEntity sourceCode equals: 'value'.
-							self assert: (self topEntity isOfType: FASTYAMLStringScalar)
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: '''implicit block key'' : [
+  ''implicit flow key'' : value,
+ ];' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
@@ -17199,21 +18621,26 @@ FASTYAMLImporterTest >> testGeneratedSingleQuotedLines [
 	3rd non-empty '';'.
 
 	self assert: (fast allWithType: FASTYAMLDocument) size equals: 1.
-	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLERROR) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLFlowNode) size equals: 2.
+	self assert: (fast allWithType: FASTYAMLPlainScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLSingleQuoteScalar) size equals: 1.
 	self assert: (fast allWithType: FASTYAMLStream) size equals: 1.
+	self assert: (fast allWithType: FASTYAMLStringScalar) size equals: 1.
 
-	stack push: fast rootEntities anyOne containedEntities first.
+	stack push: fast rootEntities anyOne.
 	self assert: self topEntity sourceCode equals: ''' 1st non-empty
 
 
 
  2nd non-empty
-	3rd non-empty ''' withPlatformLineEndings.
-	self assert: (self topEntity isOfType: FASTYAMLDocument).
+	3rd non-empty '';' withPlatformLineEndings.
+	self assert: (self topEntity isOfType: FASTYAMLStream).
+	self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+	self assert: (self topEntity isOfType: FamixTSourceAnchor).
 	
 	"Testing value of multivalued relation childrenNodes"
-	self assert: self topEntity childrenNodes size equals: 1.
+	self assert: self topEntity childrenNodes size equals: 2.
 	
 		stack push: (stack top childrenNodes at: 1).
 		self assert: self topEntity sourceCode equals: ''' 1st non-empty
@@ -17222,19 +18649,71 @@ FASTYAMLImporterTest >> testGeneratedSingleQuotedLines [
 
  2nd non-empty
 	3rd non-empty ''' withPlatformLineEndings.
-		self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+		self assert: (self topEntity isOfType: FASTYAMLERROR).
+		self assert: (self topEntity isOfType: FamixTHasImmediateSource).
+		self assert: (self topEntity isOfType: FamixTSourceAnchor).
 		
-		"Testing value of multivalued relation childrenNodes"
-		self assert: self topEntity childrenNodes size equals: 1.
+		"Testing value of multivalued relation genericChildren"
+		self assert: self topEntity genericChildren size equals: 1.
 		
-			stack push: (stack top childrenNodes at: 1).
+			stack push: (stack top genericChildren at: 1).
 			self assert: self topEntity sourceCode equals: ''' 1st non-empty
 
 
 
  2nd non-empty
 	3rd non-empty ''' withPlatformLineEndings.
-			self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar)
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ''' 1st non-empty
+
+
+
+ 2nd non-empty
+	3rd non-empty ''' withPlatformLineEndings.
+				self assert: (self topEntity isOfType: FASTYAMLSingleQuoteScalar).
+				stack pop.
+			stack pop.
+		stack pop.
+	
+		stack push: (stack top childrenNodes at: 2).
+		self assert: self topEntity sourceCode equals: ';'.
+		self assert: (self topEntity isOfType: FASTYAMLDocument).
+		
+		"Testing value of multivalued relation childrenNodes"
+		self assert: self topEntity childrenNodes size equals: 1.
+		
+			stack push: (stack top childrenNodes at: 1).
+			self assert: self topEntity sourceCode equals: ';'.
+			self assert: (self topEntity isOfType: FASTYAMLFlowNode).
+			
+			"Testing value of multivalued relation childrenNodes"
+			self assert: self topEntity childrenNodes size equals: 1.
+			
+				stack push: (stack top childrenNodes at: 1).
+				self assert: self topEntity sourceCode equals: ';'.
+				self assert: (self topEntity isOfType: FASTYAMLPlainScalar).
+				
+				"Testing value of monovalue relation childrenNode"
+				self assert: self topEntity childrenNode isNotNil.
+
+					stack push: self topEntity childrenNode.
+					self assert: self topEntity sourceCode equals: ';'.
+					self assert: (self topEntity isOfType: FASTYAMLStringScalar).
+					stack pop.
+				stack pop.
+			stack pop.
+		stack pop.
+	self assert: self topEntity source equals: ''' 1st non-empty
+
+
+
+ 2nd non-empty
+	3rd non-empty '';' withPlatformLineEndings
 ]
 
 { #category : 'tests' }
