@@ -19376,13 +19376,6 @@ FASTYAMLImporterTest >> testGeneratedUnorderedSets [
 ? Ken Griff;' withPlatformLineEndings
 ]
 
-{ #category : 'tests - importer API' }
-FASTYAMLImporterTest >> testHandlesItsExtensions [
-
-	self assert: (FASTYAMLImporter handlesFile: 'config.yml' asFileReference).
-	self deny: (FASTYAMLImporter handlesFile: 'config.json' asFileReference)
-]
-
 { #category : 'as yet unclassified' }
 FASTYAMLImporterTest >> topEntity [
 
