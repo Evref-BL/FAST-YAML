@@ -8,6 +8,13 @@ Class {
 	#package : 'FAST-YAML-Tools'
 }
 
+{ #category : 'accessing' }
+FASTYAMLImporter class >> extensions [
+	"File extensions without the dot that the importer handles"
+
+	^ #( 'yaml' 'yml' )
+]
+
 { #category : 'initialization' }
 FASTYAMLImporter >> deleteTreeSitterParser [  
 	
