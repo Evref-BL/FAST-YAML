@@ -13,20 +13,14 @@ FASTYAMLImporter class >> extensions [
 ]
 
 { #category : 'as yet unclassified' }
-FASTYAMLImporter >> importToFAST: tsTree usingSourceCode: aString [ 
+FASTYAMLImporter >> importToFAST: tsTree usingSourceCode: aString [
 
-	| tsLanguage importer |
-	
-	"needs cleaning"
-	
-	tsLanguage := TSLanguage typescript.
+	| importer |
 	importer := TSFASTCustomizableVisitor new.
-	importer tsLanguage: tsLanguage.
 	importer languageName: 'YAML'.
-	importer originString: aString. 
-	
-	^ importer import: tsTree . 
+	importer originString: aString.
 
+	^ importer import: tsTree
 ]
 
 { #category : 'accessing' }
